@@ -1,0 +1,52 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+
+experiment_name: LeRobot
+display_name: LeRobot - ACT - Poupees Russes T4  - batch 32
+tags:
+  Dataset: LeRobot - F296849/record-poupeerusse
+  Command: >- 
+    az ml job create \
+    --file examples/azureml/training/train_poupee_russes.yaml \
+    --subscription 270ae3d6-5d7d-47b8-b82d-17f1eea30f72 \
+    --resource-group AICPDCNEGBL0 \
+    -w aicpdevcnemlwweu
+
+
+resources:
+  instance_count: 1
+  shm_size: 32g
+distribution:
+  type: pytorch 
+  process_count_per_instance: 1
+
+code: ../../../ # Relative from yaml file in order to get the root directory.
+# Necessary for numpy >2.0 to update some libraries
+# - matplotlib
+# - scipy
+# - torchcodec
+command: >-
+  conda install ffmpeg -c conda-forge &&
+  pip install -U scipy &&
+  pip install -e ."[dev]" &&
+  nvidia-smi &&
+  python src/lerobot/scripts/train.py
+  --dataset.repo_id ${inputs.dataset_dir}
+  --dataset.root ${inputs.dataset_dir}
+  --policy.type act
+  --policy.push_to_hub False
+  --policy.device cuda
+  --output_dir ./outputs/LeRobot
+  --batch_size ${{inputs.batch_size}}
+  --steps ${{inputs.steps}}
+
+inputs:
+  dataset_dir:
+    type: uri_folder
+    path: azureml://datastores/lerobot_data/paths/F296849/record-poupeerusse 
+  batch_size: 32
+  steps: 100_000
+  device: cuda
+
+
+environment: azureml:lerobot_env@latest
+compute: azureml:devcnegpucluster

@@ -26,7 +26,7 @@ outputs
 
 # Apple
 .DS_Store
-
+https://github.com/FrsECM/lerobot
 # VS Code
 .vscode
 .devcontainer
@@ -42,7 +42,7 @@ sbatch*.sh
 __pycache__/
 *.py[cod]
 *$py.class
-
+./outputs
 # C extensions
 *.so
 
