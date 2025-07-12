@@ -1,4 +1,4 @@
-FROM dcy-docker-snapshot.artifactory.michelin.com/azureml/acpt-pytorch-2.7.1-cuda12.8:latest
+FROM dcy-docker-snapshot.artifactory.michelin.com/azureml/acpt-pytorch-2.7.1-cuda12.6:latest
 # ENV NO_PROXY='artifactory.michelin.com,gitlab.michelin.com'
 # ENV HTTP_PROXY="http://proxy-weu.aze.michelin.com:80"
 # ENV HTTPS_PROXY="http://proxy-weu.aze.michelin.com:80"
@@ -53,9 +53,17 @@ RUN pip install --no-cache-dir \
     torchvision>=0.21.0 \
     wandb>=0.16.3 \
     zarr>=2.17.0
- 
+
 # Install additional dependencies for lerobot
 RUN pip install --no-cache-dir -U scipy
+
+# Install smolvla dependencies
+RUN pip install --no-cache-dir \
+    transformers>=4.50.3 \
+    num2words>=0.5.14 \
+    accelerate>=1.7.0 \
+    safetensors>=0.4.3
+    
 RUN conda install -y ffmpeg -c conda-forge
 # ENV HTTP_PROXY=""
 # ENV HTTPS_PROXY=""

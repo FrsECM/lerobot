@@ -1,0 +1,52 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+
+experiment_name: LeRobot
+display_name: LeRobot - SmolVLA - Cube T4  - batch 64
+tags:
+  Dataset: LeRobot - F296849/record-cube-simple
+  Command: >- 
+    az ml job create \
+    --file examples/azureml/training/train_smolvla.yaml \
+    --subscription 270ae3d6-5d7d-47b8-b82d-17f1eea30f72 \
+    --resource-group AICPDCNEGBL0 \
+    -w aicpdevcnemlwweu
+
+
+resources:
+  instance_count: 1
+  shm_size: 32g
+distribution:
+  type: pytorch 
+  process_count_per_instance: 1
+
+code: ../../../ # Relative from yaml file in order to get the root directory.
+# Necessary for numpy >2.0 to update some libraries
+# - matplotlib
+# - scipy
+# - torchcodec
+command: >-
+  pip install -e ."[dev]" &&
+  pip install -e ".[smolvla]" &&
+  pip --no-cache-dir install torch==2.7.1+cu126 torchvision==0.22.1+cu126 --index-url https://artifactory.michelin.com/artifactory/api/pypi/download-pytorch/simple &&
+  nvidia-smi &&
+  pip list &&
+  python -m lerobot.scripts.train
+  --dataset.repo_id=${inputs.dataset_dir}
+  --dataset.root=${inputs.dataset_dir}
+  --policy.path=lerobot/smolvla_base
+  --policy.push_to_hub=false
+  --policy.device=cuda
+  --output_dir=./outputs/LeRobot
+  --batch_size=${{inputs.batch_size}}
+  --steps=${{inputs.steps}}
+
+inputs:
+  dataset_dir:
+    type: uri_folder
+    path: azureml://datastores/lerobot_data/paths/F296849/record-cube-simple 
+  batch_size: 64
+  steps: 40_000
+
+
+environment: azureml:lerobot_env@latest
+compute: azureml:devcnegpucluster

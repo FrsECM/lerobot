@@ -37,6 +37,7 @@ nautilus/*.yaml
 
 # Slurm
 sbatch*.sh
+assets/models
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
