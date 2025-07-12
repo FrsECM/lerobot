@@ -12,12 +12,12 @@ tags:
     -w aicpdevcnemlwweu
 
 
-resources:
-  instance_count: 1
-  shm_size: 32g
-distribution:
-  type: pytorch 
-  process_count_per_instance: 1
+# resources:
+#   instance_count: 1
+#   shm_size: 32g
+# distribution:
+#   type: pytorch 
+#   process_count_per_instance: 1
 
 code: ../../../ # Relative from yaml file in order to get the root directory.
 # Necessary for numpy >2.0 to update some libraries
@@ -27,7 +27,6 @@ code: ../../../ # Relative from yaml file in order to get the root directory.
 command: >-
   pip install -e ."[dev]" &&
   pip install -e ".[smolvla]" &&
-  pip --no-cache-dir install torch==2.7.1+cu126 torchvision==0.22.1+cu126 --index-url https://artifactory.michelin.com/artifactory/api/pypi/download-pytorch/simple &&
   nvidia-smi &&
   pip list &&
   python -m lerobot.scripts.train
