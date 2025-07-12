@@ -14,7 +14,7 @@
 
 # Dev scripts
 .dev
-
+assets
 # Logging
 logs
 tmp

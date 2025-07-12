@@ -178,3 +178,14 @@ test-smolvla-ete-eval:
 		--env.episode_length=5 \
 		--eval.n_episodes=1 \
 		--eval.batch_size=1
+
+train-smolvla-record-cube:
+	python -m lerobot.scripts.train \
+		--dataset.repo_id=assets/datasets/F296849/record-cube-simple \
+		--dataset.root=assets/datasets/F296849/record-cube-simple \
+		--policy.path=lerobot/smolvla_base \
+		--policy.push_to_hub=false \
+		--policy.device=mps \
+		--output_dir=./outputs/LeRobot \
+		--batch_size=64 \
+		--steps=20000
